@@ -138,13 +138,13 @@
         <file source=''
               destination='src\Classes'/>
         <templateFile condition='$PLASTER_PARAM_Errors -eq "yes"'
-              source='samples\Module.Errors.ps1'
+              source='src\Classes\Module.Errors.ps1'
               destination='src\Classes\${PLASTER_PARAM_ModuleName}.Errors.ps1' />
         <file condition='$PLASTER_PARAM_Localization -eq "yes"'
               source=''
               destination='src\en-US' />
         <file condition='$PLASTER_PARAM_Localization -eq "yes"'
-              source='samples\Module.Localization.psd1'
+              source='src\en-US\Module.Localization.psd1'
               destination='src\en-US\${PLASTER_PARAM_ModuleName}.Localization.psd1' />
 
         <templateFile condition="$PLASTER_PARAM_Options -contains 'platyPS'"
