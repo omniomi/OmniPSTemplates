@@ -72,4 +72,4 @@ The following minor differences also exist in this version of the template:
 * The VS Code tasks include ExportPublicFunctions
 * The settings.json file contains `"powershell.scriptAnalysis.settingsPath": "ScriptAnalyzerSettings.psd1"` instead of `"powershell.scriptAnalysis.settingsPath": "src\ScriptAnalyzerSettings.psd1"`
 * ScriptAnalyzerSettings.psd1 is set to ignore the 'Select' and 'Where' aliases and has a commented out rule for enforcing brace placement.
-* build.ps1 is parameterized and can be used to run different built steps.
+* build.ps1 is parameterized and can be used to run different build steps.
