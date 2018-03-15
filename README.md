@@ -64,3 +64,9 @@ __Running the Command__
 This is a modified version of the '[NewModule](https://github.com/PowerShell/Plaster/tree/master/examples/NewModule)' example template from the official [Plaster](https://github.com/PowerShell/Plaster) repository.
 
 [More Details](NewModule/README.md)
+
+### [NewScript](NewScript/)
+
+A heavily modified version of the '[NewModule](https://github.com/PowerShell/Plaster/tree/master/examples/NewModule)' example template from the official [Plaster](https://github.com/PowerShell/Plaster) repository. This template creates a single file ps1 script with a `#PSScriptInfo` block ready for publishing.
+
+[More Details](NewScript/README.md)
