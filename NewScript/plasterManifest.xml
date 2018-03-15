@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plasterManifest schemaVersion="0.4" xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
+    <metadata>
+        <id>9e22f353-f982-4ecc-959c-8fa4cebec6b4</id>
+        <name>NewScript</name>
+        <title>New Script</title>
+        <description>Scaffolds the files required for a PowerShell script.</description>
+        <version>1.0.0</version>
+        <tags>Script, ScriptFileInfo, Build</tags>
+    </metadata>
+
+    <parameters>
+        <parameter name='ScriptName'
+                   type='text'
+                   prompt='Enter the name of the script'/>
+
+        <parameter name='ScriptDesc'
+                   type='text'
+                   prompt='Enter a description of the script (required for publishing to the PowerShell Gallery)'/>
+
+        <parameter name='Version'
+                   type='text'
+                   prompt='Enter the version number of the script'
+                   default='0.1.0'/>
+
+        <parameter name='FullName'
+                   type='user-fullname'
+                   prompt='Enter your full name'
+                   store='text' />
+
+        <parameter name='License'
+                   type='choice'
+                   prompt='Select a license (see http://choosealicense.com for help choosing):'
+                   default='0'
+                   store='text'>
+            <choice label='&amp;None'
+                    help="No license."
+                    value="None"/>
+            <choice label='&amp;Apache'
+                    help="Adds an Apache license file."
+                    value="Apache"/>
+            <choice label='&amp;MIT'
+                    help="Adds an MIT license file."
+                    value="MIT"/>
+        </parameter>
+
+        <parameter name='Options'
+                   type='multichoice'
+                   prompt='Select one or more of the following tooling options:'
+                   default='0,1,2,3'
+                   store='text' >
+            <choice label='Add &amp;Git .gitignore file'
+                    help="Adds a .gitignore file."
+                    value="Git"/>
+            <choice label='Add p&amp;sake build script'
+                    help="Adds psake build script that generates the module directory for publishing to the PowerShell Gallery."
+                    value="psake"/>
+            <choice label='Add &amp;Pester test support'
+                    help="Adds test directory and Pester test for the module manifest file."
+                    value="Pester"/>
+            <choice label='Add PSScript&amp;Analyzer support'
+                    help="Adds script analysis support using PSScriptAnalyzer."
+                    value="PSScriptAnalyzer"/>
+            <choice label='&amp;None'
+                    help="No tooling options specified."
+                    value="None"/>
+        </parameter>
+
+        <parameter name='Editor'
+                   type='choice'
+                   prompt='Select one of the supported script editors for better editor integration (or None):'
+                   default='0'
+                   store='text' >
+            <choice label='&amp;None'
+                    help="No editor specified."
+                    value="None"/>
+            <choice label='Visual Studio &amp;Code'
+                    help="Your editor is Visual Studio Code."
+                    value="VSCode"/>
+        </parameter>
+    </parameters>
+
+    <content>
+        <message>&#10;&#10;Scaffolding your PowerShell Script...&#10;&#10;&#10;</message>
+
+        <templateFile source='src\Script.ps1'
+              destination='src\${PLASTER_PARAM_ScriptName}.ps1'/>
+
+        <file condition='$PLASTER_PARAM_Options -contains "Git"'
+              source='_gitignore'
+              destination='.gitignore' />
+        <file condition='$PLASTER_PARAM_Options -contains "psake"'
+              source='build*.ps1'
+              destination='' />
+        <file source='ReleaseNotes.md'
+              destination=''/>
+        <file condition='$PLASTER_PARAM_Options -contains "PSScriptAnalyzer"'
+              source='ScriptAnalyzerSettings.psd1'
+              destination=''/>
+
+        <templateFile condition="$PLASTER_PARAM_Options -contains 'Pester'"
+                      source='test\Script.T.ps1'
+                      destination='test\${PLASTER_PARAM_ScriptName}.Tests.ps1' />
+        <templateFile condition="$PLASTER_PARAM_License -eq 'Apache'"
+                      source='license\Apache.txt'
+                      destination='LICENSE.txt'
+                      encoding="UTF8-NoBOM"/>
+        <templateFile condition="$PLASTER_PARAM_License -eq 'MIT'"
+                      source='license\MIT.txt'
+                      destination='LICENSE.txt' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode') -and ($PLASTER_PARAM_Options -notcontains 'psake') -and ($PLASTER_PARAM_Options -contains 'Pester')"
+              source='editor\VSCode\tasks_pester.json'
+              destination='.vscode\tasks.json' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode') -and ($PLASTER_PARAM_Options -contains 'psake') -and ($PLASTER_PARAM_Options -notcontains 'Pester')"
+              source='editor\VSCode\tasks_psake.json'
+              destination='.vscode\tasks.json' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode') -and ($PLASTER_PARAM_Options -contains 'psake') -and ($PLASTER_PARAM_Options -contains 'Pester')"
+              source='editor\VSCode\tasks_psake_pester.json'
+              destination='.vscode\tasks.json' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode') -and ($PLASTER_PARAM_Options -contains 'PSScriptAnalyzer')"
+              source='editor\VSCode\settings.json'
+              destination='.vscode\settings.json' />
+
+        <requireModule name="Pester" condition='$PLASTER_PARAM_Options -contains "Pester"' minimumVersion="3.4.0"
+            message="Without Pester, you will not be able to run the provided Pester test to validate your module manifest file.`nWithout version 3.4.0, VS Code will not display Pester warnings and errors in the Problems panel."/>
+
+        <requireModule name="psake" condition='$PLASTER_PARAM_Options -contains "psake"'
+            message="Without psake, you will not be able to run the provided build script to build and/or publish your module."/>
+
+        <requireModule name="PSScriptAnalyzer" condition='$PLASTER_PARAM_Options -contains "PSScriptAnalyzer"'
+            message="Without PSScriptAnalyzer, you will not be able to perform script analysis, or use the provided options to control script analysis."/>
+
+        <message>
+
+Your new PowerShell script project '$PLASTER_PARAM_ScriptName' has been created.
+
+        </message>
+
+        <message condition="$PLASTER_PARAM_Options -contains 'Pester'">
+A Pester test has been created to validate the scripts's file info.  Add additional tests to the test directory.
+You can run the Pester tests in your project by executing the 'test' task.  Press Ctrl+P, then type 'task test'.
+
+        </message>
+
+        <message condition="$PLASTER_PARAM_Options -contains 'psake'">
+You can build your project by executing the 'build' task.  Press Ctrl+P, then type 'task build'.
+You can publish your project to the PSGallery by pressing Ctrl+P, then type 'task publish'.
+
+        </message>
+    </content>
+</plasterManifest>
