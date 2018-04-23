@@ -4,6 +4,7 @@
         <id>81239986-7a03-45b6-9a5c-9fa48f9841b6</id>
         <name>OmniNewModule</name>
         <title>Omni's New Module</title>
+        <author>omniomi</author>
         <description>Scaffolds the files required for a PowerShell module. This is modified from one of the official examples.</description>
         <version>1.1.0</version>
         <tags>Module, ModuleManifest, Build</tags>

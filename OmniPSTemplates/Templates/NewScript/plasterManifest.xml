@@ -4,6 +4,7 @@
         <id>6935d532-7511-4876-acdb-b8b275337ad2</id>
         <name>OmniNewScript</name>
         <title>Omni's New Script</title>
+        <author>omniomi</author>
         <description>Scaffolds the files required for a PowerShell script.</description>
         <version>1.0.0</version>
         <tags>Script, ScriptFileInfo, Build</tags>
