@@ -53,7 +53,7 @@
 ###############################################################################
 # Dot source the user's customized properties and extension tasks.
 ###############################################################################
-. $PSScriptRoot\build.settings.ps1
+. $PSScriptRoot\_build.settings.ps1
 
 ###############################################################################
 # Private properties.
@@ -86,19 +86,6 @@ Task Init -requiredVariables OutDir {
     }
 }
 
-Task ExportPublicFunctions -requiredVariables SrcRootDir, ModuleName {
-    $PublicScriptFiles = @(Get-ChildItem "$SrcRootDir\Public" -Filter *.ps1 -Recurse)
-
-    $PublicFunctions = @(foreach ($ScriptFile in $PublicScriptFiles) {
-        $Parser = [System.Management.Automation.Language.Parser]::ParseFile($ScriptFile.FullName, [ref] $null, [ref] $null)
-        if ($Parser.EndBlock.Statements.Name) {
-            $Parser.EndBlock.Statements.Name
-        }
-    })
-
-    Update-ModuleManifest -Path "$SrcRootDir\$ModuleName.psd1" -FunctionsToExport $PublicFunctions
-}
-
 Task Clean -depends Init -requiredVariables OutDir {
     if ($OutDir.Length -gt 3) {
         Get-ChildItem $OutDir | Remove-Item -Recurse -Force -Verbose:$VerbosePreference
@@ -108,7 +95,7 @@ Task Clean -depends Init -requiredVariables OutDir {
     }
 }
 
-Task StageFiles -depends Init, Clean, ExportPublicFunctions, BeforeStageFiles, CoreStageFiles, AfterStageFiles {
+Task StageFiles -depends Init, Clean, BeforeStageFiles, CoreStageFiles, AfterStageFiles {
 }
 
 Task CoreStageFiles -requiredVariables ModuleOutDir, SrcRootDir {
