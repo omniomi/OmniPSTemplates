@@ -150,12 +150,22 @@ PrivateData = @{
         # External dependent modules of this module
         # ExternalModuleDependencies = ''
 
+        Extensions = @(
+            @{
+                Module = "Plaster"
+                MinimumVersion = "1.1.0"
+                Details = @{
+                    TemplatePaths = @("Templates\NewModule","Templates\NewScript")
+                }
+            }
+        )
+
     } # End of PSData hashtable
 
 } # End of PrivateData hashtable
 
 # HelpInfo URI of this module
-# HelpInfoURI = ''
+HelpInfoURI = 'https://github.com/omniomi/Plaster-Templates/tree/master/docs'
 
 # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
 # DefaultCommandPrefix = ''
