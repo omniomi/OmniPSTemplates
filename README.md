@@ -24,7 +24,7 @@ Install-Module Plaster
 ### PowerShell Gallery
 
 ```
-Install-Module SSPowerShellBoilerplate -Scope CurrentUser
+Install-Module OmniPSTemplates -Scope CurrentUser
 ```
 
 ### Manually
@@ -32,7 +32,7 @@ Install-Module SSPowerShellBoilerplate -Scope CurrentUser
 #### From Source
 
 ```
-git clone https://github.com/omniomi/Plaster-Templates.git
+git clone https://github.com/omniomi/OmniPSTemplates.git
 cd .\Plaster-Templates\tools
 .\Build.ps1 Install
 ```
