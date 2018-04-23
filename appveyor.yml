@@ -30,9 +30,7 @@ test_script:
   - ps: .\tools\appveyor.ps1 -Task Test
 
 build_script:
-  - ps: |
-      $Profile = Import-CliXml $env:temp\PSProfile.xml
-      .\tools\appveyor.ps1 -Task Build
+  - ps: .\tools\appveyor.ps1 -Task Build
 
 on_finish:
   - ps: .\tools\appveyor.ps1 -Task Finish
