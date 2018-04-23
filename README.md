@@ -11,7 +11,7 @@ Recomended Additional Modules:
 
 ## Working with Plaster
 
-### Installation
+### Install Plaster
 
 If you have the [PowerShellGet](https://docs.microsoft.com/en-us/powershell/gallery/readme) module installed:
 
@@ -19,31 +19,48 @@ If you have the [PowerShellGet](https://docs.microsoft.com/en-us/powershell/gall
 Install-Module Plaster
 ```
 
-### Starting a project from a template (CLI)
+## Installation
 
-In order to start a project using a Plaster template you need to use the `Invoke-Plaster` cmdlet and specify the location of the template and the destination for the new project. For example:
-
-```
-Invoke-Plaster -TemplatePath 'c:\pwsh\_Templates\Module' -DestinationPath 'c:\pwsh\MyNewModule'
-```
-
-After running `Invoke-Plaster` you will be prompted for information regarding the project and asked to make choices about features to include.
-
-### Starting a project from a template (VS Code)
-
-In VS Code with the PowerShell extension installed it is possible to run the command `PowerShell: Create New Project from Plaster Template`.
-
-__Setup__
-
-* Determine the Plaster installation directory
+### PowerShell Gallery
 
 ```
-Get-Module Plaster -ListAvailable | select ModuleBase
+Install-Module SSPowerShellBoilerplate -Scope CurrentUser
 ```
 
-* Place your Plaster templates in the "Templates" folder inside the Plaster installation directory.
+### Manually
 
-__Running the Command__
+#### From Source
+
+```
+git clone https://github.com/omniomi/Plaster-Templates.git
+cd .\Plaster-Templates\tools
+.\Build.ps1 Install
+```
+
+#### From Zip
+
+1. Download the OmniPSTemplates.zip from ...
+2. Extract the contents to `C:\Users\<Your Name>\Documents\WindowsPowerShell\Modules\`
+
+## Usage
+
+### Command Line
+
+**Module**
+
+```
+$Template =  Get-PlasterTemplate -IncludeInstalledModules | ? { $_.Title -eq "Omni's New Module" }
+Invoke-Plaster -TemplatePath $Template.TemplatePath
+```
+
+**Script**
+
+```
+$Template =  Get-PlasterTemplate -IncludeInstalledModules | ? { $_.Title -eq "Omni's New Script" }
+Invoke-Plaster -TemplatePath $Template.TemplatePath
+```
+
+### VS Code
 
 1. In VS Code open the command palette
 
@@ -51,22 +68,21 @@ __Running the Command__
 
 > Windows / Linux: <kbd>ctrl+p</kbd>
 
-2. Type a `>` followed by "Plaster".
+2. Type a ">" followed by "Plaster".
 
-3. Select the command `PowerShell: Create New Project from Plaster Template`.
+3. Select the command "PowerShell: Create New Project from Plaster Template."
 
-4. Follow the on-screen prompts.
+4. Click the option to "Load additional templates from installed modules" at the top.
+
+5. Select the appropriate template.
+
 
 ## Templates
 
-### [NewModule](NewModule/)
+### [NewModule](docs/About_NewModule.md)
 
 This is a modified version of the '[NewModule](https://github.com/PowerShell/Plaster/tree/master/examples/NewModule)' example template from the official [Plaster](https://github.com/PowerShell/Plaster) repository.
 
-[More Details](NewModule/README.md)
-
-### [NewScript](NewScript/)
+### [NewScript](docs/About_NewScript.md)
 
 A heavily modified version of the '[NewModule](https://github.com/PowerShell/Plaster/tree/master/examples/NewModule)' example template from the official [Plaster](https://github.com/PowerShell/Plaster) repository. This template creates a single file ps1 script with a `#PSScriptInfo` block ready for publishing.
-
-[More Details](NewScript/README.md)

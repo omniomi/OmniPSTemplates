@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plasterManifest schemaVersion="0.4" xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
     <metadata>
-        <id>9e22f353-f982-4ecc-959c-8fa4cebec6b4</id>
-        <name>NewScript</name>
-        <title>New Script</title>
-        <description>Scaffolds the files required for a PowerShell script.</description>
-        <version>1.0.0</version>
-        <tags>Script, ScriptFileInfo, Build</tags>
+        <id>81239986-7a03-45b6-9a5c-9fa48f9841b6</id>
+        <name>OmniNewModule</name>
+        <title>Omni's New Module</title>
+        <description>Scaffolds the files required for a PowerShell module. This is modified from one of the official examples.</description>
+        <version>1.1.0</version>
+        <tags>Module, ModuleManifest, Build</tags>
     </metadata>
 
     <parameters>
-        <parameter name='ScriptName'
+        <parameter name='ModuleName'
                    type='text'
-                   prompt='Enter the name of the script'/>
+                   prompt='Enter the name of the module'/>
 
-        <parameter name='ScriptDesc'
+        <parameter name='ModuleDesc'
                    type='text'
-                   prompt='Enter a description of the script (required for publishing to the PowerShell Gallery)'/>
+                   prompt='Enter a description of the module (required for publishing to the PowerShell Gallery)'/>
 
         <parameter name='Version'
                    type='text'
-                   prompt='Enter the version number of the script'
+                   prompt='Enter the version number of the module'
                    default='0.1.0'/>
 
         <parameter name='FullName'
@@ -47,8 +47,11 @@
         <parameter name='Options'
                    type='multichoice'
                    prompt='Select one or more of the following tooling options:'
-                   default='0,1,2,3'
+                   default='1,2,3,4'
                    store='text' >
+            <choice label='&amp;None'
+                    help="No tooling options specified."
+                    value="None"/>
             <choice label='Add &amp;Git .gitignore file'
                     help="Adds a .gitignore file."
                     value="Git"/>
@@ -61,9 +64,35 @@
             <choice label='Add PSScript&amp;Analyzer support'
                     help="Adds script analysis support using PSScriptAnalyzer."
                     value="PSScriptAnalyzer"/>
-            <choice label='&amp;None'
-                    help="No tooling options specified."
-                    value="None"/>
+            <choice label='Add plat&amp;yPS help generation support'
+                    help="Adds help build support using platyPS."
+                    value="platyPS"/>
+        </parameter>
+
+        <parameter name='Errors'
+                   type='choice'
+                   prompt='Create [Error] class?'
+                   default='0'
+                   store='text' >
+            <choice label='&amp;No'
+                    help="No"
+                    value="No"/>
+            <choice label='&amp;Yes'
+                    help="A file containing an [Error] class will be created in the Classes folder."
+                    value="Yes"/>
+        </parameter>
+
+        <parameter name='Localization'
+                   type='choice'
+                   prompt='Include localization (multilingual support)?'
+                   default='0'
+                   store='text' >
+            <choice label='&amp;No'
+                    help="No"
+                    value="No"/>
+            <choice label='&amp;Yes'
+                    help="Yes"
+                    value="Yes"/>
         </parameter>
 
         <parameter name='Editor'
@@ -81,10 +110,14 @@
     </parameters>
 
     <content>
-        <message>&#10;&#10;Scaffolding your PowerShell Script...&#10;&#10;&#10;</message>
+        <message>&#10;&#10;Scaffolding your PowerShell Module...&#10;&#10;&#10;</message>
 
-        <templateFile source='src\Script.ps1'
-              destination='src\${PLASTER_PARAM_ScriptName}.ps1'/>
+        <newModuleManifest destination='src\${PLASTER_PARAM_ModuleName}.psd1'
+                           moduleVersion='$PLASTER_PARAM_Version'
+                           rootModule='${PLASTER_PARAM_ModuleName}.psm1'
+                           author='$PLASTER_PARAM_FullName'
+                           description='$PLASTER_PARAM_ModuleDesc'
+                           encoding='UTF8-NoBOM'/>
 
         <file condition='$PLASTER_PARAM_Options -contains "Git"'
               source='_gitignore'
@@ -94,13 +127,38 @@
               destination='' />
         <file source='ReleaseNotes.md'
               destination=''/>
-        <file condition='$PLASTER_PARAM_Options -contains "PSScriptAnalyzer"'
-              source='ScriptAnalyzerSettings.psd1'
+        <templateFile source='src\Module.psm1'
+              destination='src\${PLASTER_PARAM_ModuleName}.psm1'/>
+        <file source='ScriptAnalyzerSettings.psd1'
               destination=''/>
+        <file source=''
+              destination='src\Public'/>
+        <file source=''
+              destination='src\Private'/>
+        <file source=''
+              destination='src\Classes'/>
+        <templateFile condition='$PLASTER_PARAM_Errors -eq "yes"'
+              source='src\Classes\Module.Errors.ps1'
+              destination='src\Classes\${PLASTER_PARAM_ModuleName}.Errors.ps1' />
+        <file condition='$PLASTER_PARAM_Localization -eq "yes"'
+              source=''
+              destination='src\en-US' />
+        <file condition='$PLASTER_PARAM_Localization -eq "yes"'
+              source='src\en-US\Module.Localization.psd1'
+              destination='src\en-US\${PLASTER_PARAM_ModuleName}.Localization.psd1' />
 
+        <templateFile condition="$PLASTER_PARAM_Options -contains 'platyPS'"
+                      source='docs\en-US\about_Module.help.md'
+                      destination='docs\en-US\about_${PLASTER_PARAM_ModuleName}.help.md'/>
+        <templateFile condition="$PLASTER_PARAM_Options -notcontains 'platyPS'"
+                      source='docs\en-US\about_Module.help.txt'
+                      destination='src\en-US\about_${PLASTER_PARAM_ModuleName}.help.txt'/>
         <templateFile condition="$PLASTER_PARAM_Options -contains 'Pester'"
-                      source='test\Script.T.ps1'
-                      destination='test\${PLASTER_PARAM_ScriptName}.Tests.ps1' />
+                      source='test\Module.T.ps1'
+                      destination='test\${PLASTER_PARAM_ModuleName}.Tests.ps1' />
+        <templateFile condition="$PLASTER_PARAM_Options -contains 'Pester'"
+                      source='test\Shared.ps1'
+                      destination='test\Shared.ps1' />
         <templateFile condition="$PLASTER_PARAM_License -eq 'Apache'"
                       source='license\Apache.txt'
                       destination='LICENSE.txt'
@@ -134,14 +192,17 @@
         <requireModule name="PSScriptAnalyzer" condition='$PLASTER_PARAM_Options -contains "PSScriptAnalyzer"'
             message="Without PSScriptAnalyzer, you will not be able to perform script analysis, or use the provided options to control script analysis."/>
 
+        <requireModule name="platyPS" condition='$PLASTER_PARAM_Options -contains "platyPS"' minimumVersion="0.7.2"
+            message="Without platyPS, you will not be able to generate PowerShell external help for your module using markdown."/>
+
         <message>
 
-Your new PowerShell script project '$PLASTER_PARAM_ScriptName' has been created.
+Your new PowerShell module project '$PLASTER_PARAM_ModuleName' has been created.
 
         </message>
 
         <message condition="$PLASTER_PARAM_Options -contains 'Pester'">
-A Pester test has been created to validate the scripts's file info.  Add additional tests to the test directory.
+A Pester test has been created to validate the module's manifest file.  Add additional tests to the test directory.
 You can run the Pester tests in your project by executing the 'test' task.  Press Ctrl+P, then type 'task test'.
 
         </message>
@@ -149,6 +210,13 @@ You can run the Pester tests in your project by executing the 'test' task.  Pres
         <message condition="$PLASTER_PARAM_Options -contains 'psake'">
 You can build your project by executing the 'build' task.  Press Ctrl+P, then type 'task build'.
 You can publish your project to the PSGallery by pressing Ctrl+P, then type 'task publish'.
+
+        </message>
+
+        <message condition="($PLASTER_PARAM_Options -contains 'psake') -and ($PLASTER_PARAM_Options -contains 'platyPS')">
+You can generate help and additional documentation using platyPS by running the 'build help' task.  Press Ctrl+P,
+then type 'task build help'.  Add additional documentation written in platyPS markdown to the docs directory. You can
+update the help by running the 'build help' task again.
 
         </message>
     </content>
