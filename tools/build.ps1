@@ -12,14 +12,14 @@ $ReleasePath       = Join-Path $PSScriptRoot "..\Release"
 $ModuleInstallPath = Join-Path $env:USERPROFILE "\Documents\WindowsPowerShell\Modules"
 
 switch ($Task) {
-    'Build'   { Invoke-psake $psakeSettingsPath -taskList GenerateFileCatalog }
+    'Build'   { Invoke-psake $psakeSettingsPath -taskList Build }
     'Test'    { Invoke-psake $psakeSettingsPath -taskList Test }
     'TestSrc' { Invoke-Pester $PesterTestPath }
     'Install' {
         if (Test-Path (Join-Path $ModuleInstallPath 'OmniPSTemplates')) { throw "It appears this module is already installed. Please delete it from $ModuleInstallPath" }
 
         Write-Host "#`n# Starting Build...`n#"
-        Invoke-psake $psakeSettingsPath -taskList GenerateFileCatalog
+        Invoke-psake $psakeSettingsPath -taskList Build
         Write-Host "`n`n`# Install Module..."
         Get-ChildItem -LiteralPath $ReleasePath -Directory | Copy-Item -Destination $ModuleInstallPath -Recurse
         Write-Host "# Finished."
