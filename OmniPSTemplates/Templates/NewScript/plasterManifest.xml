@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plasterManifest schemaVersion="0.4" xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
     <metadata>
-        <id>9e22f353-f982-4ecc-959c-8fa4cebec6b4</id>
-        <name>NewScript</name>
-        <title>New Script</title>
+        <id>6935d532-7511-4876-acdb-b8b275337ad2</id>
+        <name>OmniNewScript</name>
+        <title>Omni's New Script</title>
         <description>Scaffolds the files required for a PowerShell script.</description>
         <version>1.0.0</version>
         <tags>Script, ScriptFileInfo, Build</tags>

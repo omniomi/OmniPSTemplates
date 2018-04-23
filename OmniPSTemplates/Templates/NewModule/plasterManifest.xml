@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plasterManifest schemaVersion="0.4" xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
     <metadata>
-        <id>fe2eb400-3c11-499f-ae19-fddb7160f430</id>
-        <name>NewModule</name>
-        <title>New Module</title>
+        <id>81239986-7a03-45b6-9a5c-9fa48f9841b6</id>
+        <name>OmniNewModule</name>
+        <title>Omni's New Module</title>
         <description>Scaffolds the files required for a PowerShell module. This is modified from one of the official examples.</description>
         <version>1.1.0</version>
         <tags>Module, ModuleManifest, Build</tags>
