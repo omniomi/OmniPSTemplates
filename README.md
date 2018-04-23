@@ -25,7 +25,7 @@ Install-Module OmniPSTemplates -Scope CurrentUser
 
 ```
 git clone https://github.com/omniomi/OmniPSTemplates.git
-cd .\Plaster-Templates\tools
+cd .\OmniPSTemplates\tools
 .\Build.ps1 Install
 ```
 
