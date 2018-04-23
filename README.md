@@ -1,5 +1,7 @@
 # Plaster Templates
 
+[![Build status](https://ci.appveyor.com/api/projects/status/github/omniomi/omnipstemplates?branch=master&svg=true)](https://ci.appveyor.com/project/omniomi/omnipstemplates/branch/master)
+
 This is a collection of [Plaster](https://github.com/PowerShell/Plaster) templates I use when working in PowerShell.
 
 Recomended Additional Modules:
@@ -8,16 +10,6 @@ Recomended Additional Modules:
 * [PlatyPS](https://github.com/PowerShell/platyPS)
 * [Pester](https://github.com/pester/Pester)
 * [PSScriptAnalyzer](https://github.com/PowerShell/PSScriptAnalyzer)
-
-## Working with Plaster
-
-### Install Plaster
-
-If you have the [PowerShellGet](https://docs.microsoft.com/en-us/powershell/gallery/readme) module installed:
-
-```
-Install-Module Plaster
-```
 
 ## Installation
 
@@ -39,10 +31,16 @@ cd .\Plaster-Templates\tools
 
 #### From Zip
 
-1. Download the OmniPSTemplates.zip from ...
-2. Extract the contents to `C:\Users\<Your Name>\Documents\WindowsPowerShell\Modules\`
+1. Download the OmniPSTemplates.zip from https://ci.appveyor.com/project/omniomi/omnipstemplates/build/artifacts
+2. Extract the contents to `C:\Users\<Your Name>\Documents\WindowsPowerShell\Modules\OmniPSTemplates`
 
 ## Usage
+
+If you have the [PowerShellGet](https://docs.microsoft.com/en-us/powershell/gallery/readme) module installed:
+
+```
+Install-Module Plaster
+```
 
 ### Command Line
 
