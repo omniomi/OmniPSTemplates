@@ -20,14 +20,15 @@ switch ($Task) {
     }
 
     'Build'  {
-        .\build.ps1 Build
+        $BuildScript = Join-Path $env:APPVEYOR_BUILD_FOLDER '\tools\build.ps1'
+        .$BuildScript -Task Build
     }
 
     'Finish' {
         $ReleaseDirectory = Join-Path $env:APPVEYOR_BUILD_FOLDER '\Release\OmniPSTemplates'
-        $zipFile = Join-Path $env:APPVEYOR_BUILD_FOLDER "OmniPSTemplates.zip"
+        $ZipFile = Join-Path $env:APPVEYOR_BUILD_FOLDER "OmniPSTemplates.zip"
         Add-Type -assemblyname System.IO.Compression.FileSystem
-        [System.IO.Compression.ZipFile]::CreateFromDirectory($releaseDirectory, $zipFile)
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($ReleaseDirectory, $ZipFile)
         Push-AppveyorArtifact $zipFile
     }
 }
