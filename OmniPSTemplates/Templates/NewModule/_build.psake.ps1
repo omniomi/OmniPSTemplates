@@ -165,20 +165,37 @@ Task CoreStageFiles -requiredVariables ModuleOutDir, SrcRootDir, ModuleName {
             }
 
             2 {
-                # Script files to be concatinated or excluded.
-                $FileTypes = @('ps1','psm1')
-                [regex] $FileTypeRegEx = '(?i)^(?:' + (($FileTypes | ForEach-Object {[regex]::escape($_)}) -join "|") + ')$'
-
                 # Copy non-script files.
+                Get-ChildItem -Path $SrcRootDir -Directory -Recurse |
+                    Where-Object { $_.GetFiles() -and $_.GetFiles().Extension -notmatch [regex]"ps1" } |
+                    Copy-Item -Destination {Join-Path $ModuleOutDir ($_.Parent.FullName.Substring($SrcRootDir.length))}
+
                 Get-ChildItem -Path $SrcRootDir -File -Recurse |
-                    Where-Object { $_.Name.Split('.')[-1] -notmatch $FileTypeRegEx } |
+                    Where-Object { $_.Name.Split('.')[-1] -notmatch [regex]"^ps1$" } |
                     Copy-Item -Destination { Join-Path $ModuleOutDir $_.FullName.Substring($SrcRootDir.length) } -Force
 
                 # Concatinate the rest.
                 $Files = Get-ChildItem -Path $SrcRootDir -File -Recurse | Where-Object { $_.Name.Split('.')[-1] -match [regex]"^ps1$" }
                 $ModuleManifest = Join-Path $ModuleOutDir "$ModuleName.psm1"
-                New-Item $ModuleManifest -Force | Out-Null
-                Get-Content $Files.FullName | Set-Content $ModuleManifest -Force
+                $ManifestContent = Get-Content $ModuleManifest -Raw
+
+                $Lines = foreach ($File in $Files) {
+                    foreach ($Line in [System.IO.File]::ReadLines($File.FullName)) {
+                        if ($Line -like "#Requires*") {
+                            [pscustomobject]@{Level = 0 ; Line = $Line}
+                        } elseif ($Line -like "Using*") {
+                            [pscustomobject]@{Level = 1 ; Line = $Line}
+                        } else {
+                            [pscustomobject]@{Level = 2 ; Line = $Line}
+                        }
+                    }
+                }
+
+                Set-Content $ModuleManifest -Value $null -Encoding Ascii -Force
+                $Lines | Where-Object { $_.Level -eq 0 } | Select -ExpandProperty Line | Out-File $ModuleManifest -Append -Encoding ascii
+                $Lines | Where-Object { $_.Level -eq 1 } | Select -ExpandProperty Line | Out-File $ModuleManifest -Append -Encoding ascii
+                $ManifestContent | Out-File $ModuleManifest -Append -Encoding ascii
+                $Lines | Where-Object { $_.Level -eq 2 } | Select -ExpandProperty Line | Out-File $ModuleManifest -Append -Encoding ascii
             }
 
             default {

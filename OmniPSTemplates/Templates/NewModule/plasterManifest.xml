@@ -70,6 +70,19 @@
                     value="platyPS"/>
         </parameter>
 
+        <parameter name='Appveyor'
+                   type='choice'
+                   prompt='Include Appveyor files?'
+                   default='0'
+                   store='text' >
+            <choice label='&amp;No'
+                    help="No"
+                    value="No"/>
+            <choice label='&amp;Yes'
+                    help="Appveyor yaml and script files will be created for your project."
+                    value="Yes"/>
+        </parameter>
+
         <parameter name='Errors'
                    type='choice'
                    prompt='Create [Error] class?'
@@ -138,6 +151,12 @@
               destination='src\Private'/>
         <file source=''
               destination='src\Classes'/>
+        <file condition='$PLASTER_PARAM_Appveyor -eq "yes"'
+              source='appveyor.ps1'
+              destination='tools\appveyor.ps1' />
+        <file condition='$PLASTER_PARAM_Appveyor -eq "yes"'
+              source='Appveyor.yml'
+              destination='Appveyor.yml' />
         <templateFile condition='$PLASTER_PARAM_Errors -eq "yes"'
               source='src\Classes\Module.Errors.ps1'
               destination='src\Classes\${PLASTER_PARAM_ModuleName}.Errors.ps1' />

@@ -24,11 +24,11 @@ using namespace System.Management.Automation
 #>
 
 class Error {
-static [ErrorRecord] PathNotFound([String]$Exception,[string]$Path) {
-    $Exp = [System.ArgumentException]::new($Exception -f $Path)
-    $ErrorCategory = [ErrorCategory]::ObjectNotFound
-    return [ErrorRecord]::new($Exp, 'PathNotFound', $ErrorCategory, $Path)
-}
+    static [ErrorRecord] PathNotFound([String]$Exception,[string]$Path) {
+        $Exp = [System.ArgumentException]::new($Exception -f $Path)
+        $ErrorCategory = [ErrorCategory]::ObjectNotFound
+        return [ErrorRecord]::new($Exp, 'PathNotFound', $ErrorCategory, $Path)
+    }
 }
 '@
     }

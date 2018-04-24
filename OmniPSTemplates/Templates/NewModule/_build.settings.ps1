@@ -48,7 +48,7 @@ Properties {
 
     # Select the level of concatenation desired.
     # 1 - public functions are concatenated to the psm1, private functions are concatenated to a separate file.
-    # 2 - the entire module is concatenated to the psm1.
+    # 2 - the entire module is concatenated to the psm1. (Localization files and other non-ps1  files will not be concatinated.)
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
     $ConcatenationLevel = 1
 
