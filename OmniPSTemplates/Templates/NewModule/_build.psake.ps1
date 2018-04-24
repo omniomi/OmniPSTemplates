@@ -138,6 +138,7 @@ Task CoreStageFiles -requiredVariables ModuleOutDir, SrcRootDir, ModuleName {
     if (-not ($ConcatenateBuild)) {
         Copy-Item -Path $SrcRootDir\* -Destination $ModuleOutDir -Recurse -Exclude $Exclude -Verbose:$VerbosePreference
     } else {
+        "Module concatenation is enabled. Level $ConcatenationLevel"
         switch ($ConcatenationLevel) {
             1 {
                 $FunctionFolders = @("Private","Public")
