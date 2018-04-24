@@ -634,6 +634,39 @@ Task ShowCertSubjectName -requiredVariables SettingsPath {
     }
 }
 
+Task BuildTests -requiredVariables SrcRootDir, TestRootDir {
+    $PublicScriptFiles = @(Get-ChildItem "$SrcRootDir\Public" -Filter *.ps1 -Recurse)
+
+    $PublicFunctions = @(foreach ($ScriptFile in $PublicScriptFiles) {
+        $Parser = [System.Management.Automation.Language.Parser]::ParseFile($ScriptFile.FullName, [ref] $null, [ref] $null)
+        if ($Parser.EndBlock.Statements.Name) {
+            $Parser.EndBlock.Statements.Name
+        }
+    })
+
+    foreach ($Function in $PublicFunctions) {
+        $TestFile = Join-Path $TestRootDir "$Function.Tests.ps1"
+        if (Test-Path $TestFile) { continue }
+
+        New-Item $TestFile -ErrorAction SilentlyContinue -Verbose:$VerbosePreference > $null
+
+        $TestHead = @'
+[System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '', Scope='*', Target='SuppressImportModule')]
+$SuppressImportModule = $false
+. $PSScriptRoot\Shared.ps1
+
+'@
+
+        $TestBody = @"
+Describe '$Function' {
+
+}
+"@
+
+        $TestHead + $TestBody | Out-File $TestFile -Encoding Ascii
+    }
+}
+
 ###############################################################################
 # Helper functions
 ###############################################################################
