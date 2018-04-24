@@ -33,30 +33,30 @@
 # You can exeute a specific task, such as the Test task by running the
 # following command:
 #
-# PS C:\> invoke-psake build.psake.ps1 -taskList Test
+# PS C:\> invoke-psake _build.psake.ps1 -taskList Test
 #
 # You can execute the Publish task with the following command.
 # The first time you execute the Publish task, you will be prompted to enter
 # your PowerShell Gallery NuGetApiKey.  After entering the key, it is encrypted
 # and stored so you will not have to enter it again.
 #
-# PS C:\> invoke-psake build.psake.ps1 -taskList Publish
+# PS C:\> invoke-psake _build.psake.ps1 -taskList Publish
 #
 # You can verify the stored and encrypted NuGetApiKey by running the following
 # command which will display a portion of your NuGetApiKey in plain text.
 #
-# PS C:\> invoke-psake build.psake.ps1 -taskList ShowApiKey
+# PS C:\> invoke-psake _build.psake.ps1 -taskList ShowApiKey
 #
 # You can store a new NuGetApiKey with this command. You can leave off
 # the -properties parameter and you'll be prompted for the key.
 #
-# PS C:\> invoke-psake build.psake.ps1 -taskList StoreApiKey -properties @{NuGetApiKey='test123'}
+# PS C:\> invoke-psake _build.psake.ps1 -taskList StoreApiKey -properties @{NuGetApiKey='test123'}
 #
 
 ###############################################################################
 # Dot source the user's customized properties and extension tasks.
 ###############################################################################
-. $PSScriptRoot\build.settings.ps1
+. $PSScriptRoot\_build.settings.ps1
 
 ###############################################################################
 # Private properties.
@@ -89,7 +89,20 @@ Task Init -requiredVariables OutDir {
     }
 }
 
-Task ExportPublicFunctions -requiredVariables SrcRootDir, ModuleName {
+Task ExportPublicFunctions -requiredVariables SrcRootDir, ModuleOutDir, ModuleName {
+    $PublicScriptFiles = @(Get-ChildItem "$SrcRootDir\Public" -Filter *.ps1 -Recurse)
+
+    $PublicFunctions = @(foreach ($ScriptFile in $PublicScriptFiles) {
+        $Parser = [System.Management.Automation.Language.Parser]::ParseFile($ScriptFile.FullName, [ref] $null, [ref] $null)
+        if ($Parser.EndBlock.Statements.Name) {
+            $Parser.EndBlock.Statements.Name
+        }
+    })
+
+    Update-ModuleManifest -Path "$ModuleOutDir\$ModuleName.psd1" -FunctionsToExport $PublicFunctions
+}
+
+Task ExportFunctionsToSrc -requiredVariables SrcRootDir, ModuleName {
     $PublicScriptFiles = @(Get-ChildItem "$SrcRootDir\Public" -Filter *.ps1 -Recurse)
 
     $PublicFunctions = @(foreach ($ScriptFile in $PublicScriptFiles) {
@@ -111,10 +124,10 @@ Task Clean -depends Init -requiredVariables OutDir {
     }
 }
 
-Task StageFiles -depends Init, Clean, ExportPublicFunctions, BeforeStageFiles, CoreStageFiles, AfterStageFiles {
+Task StageFiles -depends Init, Clean, BeforeStageFiles, CoreStageFiles, AfterStageFiles, ExportPublicFunctions {
 }
 
-Task CoreStageFiles -requiredVariables ModuleOutDir, SrcRootDir {
+Task CoreStageFiles -requiredVariables ModuleOutDir, SrcRootDir, ModuleName {
     if (!(Test-Path -LiteralPath $ModuleOutDir)) {
         New-Item $ModuleOutDir -ItemType Directory -Verbose:$VerbosePreference > $null
     }
@@ -122,7 +135,56 @@ Task CoreStageFiles -requiredVariables ModuleOutDir, SrcRootDir {
         Write-Verbose "$($psake.context.currentTaskName) - directory already exists '$ModuleOutDir'."
     }
 
-    Copy-Item -Path $SrcRootDir\* -Destination $ModuleOutDir -Recurse -Exclude $Exclude -Verbose:$VerbosePreference
+    if (-not ($ConcatenateBuild)) {
+        Copy-Item -Path $SrcRootDir\* -Destination $ModuleOutDir -Recurse -Exclude $Exclude -Verbose:$VerbosePreference
+    } else {
+        switch ($ConcatenationLevel) {
+            1 {
+                $FunctionFolders = @("Private","Public")
+                [regex] $FunctionFoldersRegEx = '(?i)' + (($FunctionFolders | ForEach-Object {[regex]::escape($_)}) -join "|") + ''
+
+                # Copy all but Public and Private
+                $ToCopy = Get-ChildItem -Path $SrcRootDir -Recurse | Where-Object { $_.FullName.Replace($SrcRootDir, "") -notmatch $FunctionFoldersRegEx }
+
+                foreach ($Item in $ToCopy) {
+                    # Ignore empty folders.
+                    if ($Item.PSIsContainer -and -not($Item.GetFiles())) { continue }
+                    $Item | Copy-Item  -Destination { if ($_.PSIsContainer) { Join-Path $ModuleOutDir $_.Parent.FullName.Substring($SrcRootDir.length) } else { Join-Path $ModuleOutDir $_.FullName.Substring($SrcRootDir.length) } } -Force
+                }
+
+                # Copy contents of Public and Private files instead of the files themselves.
+                ## Private functions are concatinated to Private\PrivateFunctions.ps1
+                ## Public functions are appended to the psm1 file.
+                $PublicFunctions = Get-ChildItem (Join-Path $SrcRootDir 'Public') -Filter *.ps1 -Recurse
+                $PrivateFunctions = Get-ChildItem (Join-Path $SrcRootDir 'Private') -Filter *.ps1 -Recurse
+                $PrivateFile = Join-Path $ModuleOutDir 'Private\PrivateFunctions.ps1'
+                New-Item $PrivateFile -Force | Out-Null
+                Get-Content $PrivateFunctions.FullName | Set-Content $PrivateFile -Force
+                Get-Content $PublicFunctions.FullName -Raw | Out-File (Join-Path $ModuleOutDir "$ModuleName.psm1") -Append -Encoding ASCII
+            }
+
+            2 {
+                # Script files to be concatinated or excluded.
+                $FileTypes = @('ps1','psm1')
+                [regex] $FileTypeRegEx = '(?i)^(?:' + (($FileTypes | ForEach-Object {[regex]::escape($_)}) -join "|") + ')$'
+
+                # Copy non-script files.
+                Get-ChildItem -Path $SrcRootDir -File -Recurse |
+                    Where-Object { $_.Name.Split('.')[-1] -notmatch $FileTypeRegEx } |
+                    Copy-Item -Destination { Join-Path $ModuleOutDir $_.FullName.Substring($SrcRootDir.length) } -Force
+
+                # Concatinate the rest.
+                $Files = Get-ChildItem -Path $SrcRootDir -File -Recurse | Where-Object { $_.Name.Split('.')[-1] -match [regex]"^ps1$" }
+                $ModuleManifest = Join-Path $ModuleOutDir "$ModuleName.psm1"
+                New-Item $ModuleManifest -Force | Out-Null
+                Get-Content $Files.FullName | Set-Content $ModuleManifest -Force
+            }
+
+            default {
+                Copy-Item -Path $SrcRootDir\* -Destination $ModuleOutDir -Recurse -Exclude $Exclude -Verbose:$VerbosePreference
+            }
+        }
+    }
 }
 
 Task Build -depends Init, Clean, BeforeBuild, StageFiles, Analyze, Sign, AfterBuild {

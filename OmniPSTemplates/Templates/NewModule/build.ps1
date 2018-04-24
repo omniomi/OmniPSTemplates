@@ -1,9 +1,9 @@
 #Requires -Modules psake
 [cmdletbinding()]
 param(
-    [ValidateSet('Build','Test','BuildHelp','Install','Clean','Analyze','Publish','ExportPublicFunctions')]
+    [ValidateSet('Build','Test','BuildHelp','Install','Clean','Analyze','Publish','Sign','ExportFunctionsToSrc')]
     [string[]]$Task = 'Build'
 )
 
 Import-Module psake;Import-Module Pester;Import-Module PSScriptAnalyzer
-Invoke-psake -buildFile "$PSScriptRoot\build.psake.ps1" -taskList $Task -Verbose:$VerbosePreference
+Invoke-psake -buildFile "$PSScriptRoot\_build.psake.ps1" -taskList $Task -Verbose:$VerbosePreference
