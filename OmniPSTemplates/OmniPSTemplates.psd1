@@ -145,7 +145,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/omniomi/OmniPSTemplates/blob/master/RELEASENOTES.md'
+        # ReleaseNotes = ''
 
         # External dependent modules of this module
         # ExternalModuleDependencies = ''

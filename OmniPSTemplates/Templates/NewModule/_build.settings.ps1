@@ -42,6 +42,10 @@ Properties {
 
     # ------------------------- Build Concatenation ---------------------------
 
+    ###################################################################################
+    # WARNING : This task is exprimental. Please open an issue on Github with issues. #
+    ###################################################################################
+
     # Enable/disable the concatination of your module into fewer files during the build.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
     $ConcatenateBuild = $false
