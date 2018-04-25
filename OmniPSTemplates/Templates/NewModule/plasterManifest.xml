@@ -6,7 +6,7 @@
         <title>Omni's New Module</title>
         <author>omniomi</author>
         <description>Scaffolds the files required for a PowerShell module. This is modified from one of the official examples.</description>
-        <version>1.1.0</version>
+        <version>2.0.0</version>
         <tags>Module, ModuleManifest, Build</tags>
     </metadata>
 
@@ -70,6 +70,19 @@
                     value="platyPS"/>
         </parameter>
 
+        <parameter name='Appveyor'
+                   type='choice'
+                   prompt='Include Appveyor files?'
+                   default='0'
+                   store='text' >
+            <choice label='&amp;No'
+                    help="No"
+                    value="No"/>
+            <choice label='&amp;Yes'
+                    help="Appveyor yaml and script files will be created for your project."
+                    value="Yes"/>
+        </parameter>
+
         <parameter name='Errors'
                    type='choice'
                    prompt='Create [Error] class?'
@@ -124,20 +137,26 @@
               source='_gitignore'
               destination='.gitignore' />
         <file condition='$PLASTER_PARAM_Options -contains "psake"'
-              source='build*.ps1'
-              destination='' />
+              source='*build*.ps1'
+              destination='tools' />
         <file source='ReleaseNotes.md'
               destination=''/>
         <templateFile source='src\Module.psm1'
               destination='src\${PLASTER_PARAM_ModuleName}.psm1'/>
         <file source='ScriptAnalyzerSettings.psd1'
-              destination=''/>
+              destination='tools\ScriptAnalyzerSettings.psd1'/>
         <file source=''
               destination='src\Public'/>
         <file source=''
               destination='src\Private'/>
         <file source=''
               destination='src\Classes'/>
+        <file condition='$PLASTER_PARAM_Appveyor -eq "yes"'
+              source='appveyor.ps1'
+              destination='tools\appveyor.ps1' />
+        <file condition='$PLASTER_PARAM_Appveyor -eq "yes"'
+              source='Appveyor.yml'
+              destination='Appveyor.yml' />
         <templateFile condition='$PLASTER_PARAM_Errors -eq "yes"'
               source='src\Classes\Module.Errors.ps1'
               destination='src\Classes\${PLASTER_PARAM_ModuleName}.Errors.ps1' />
@@ -156,10 +175,10 @@
                       destination='src\en-US\about_${PLASTER_PARAM_ModuleName}.help.txt'/>
         <templateFile condition="$PLASTER_PARAM_Options -contains 'Pester'"
                       source='test\Module.T.ps1'
-                      destination='test\${PLASTER_PARAM_ModuleName}.Tests.ps1' />
+                      destination='tests\00-${PLASTER_PARAM_ModuleName}.Tests.ps1' />
         <templateFile condition="$PLASTER_PARAM_Options -contains 'Pester'"
                       source='test\Shared.ps1'
-                      destination='test\Shared.ps1' />
+                      destination='tests\Shared.ps1' />
         <templateFile condition="$PLASTER_PARAM_License -eq 'Apache'"
                       source='license\Apache.txt'
                       destination='LICENSE.txt'

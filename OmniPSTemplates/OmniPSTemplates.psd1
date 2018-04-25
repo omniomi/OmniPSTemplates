@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '1.0.1'
+ModuleVersion = '1.1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -145,7 +145,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/omniomi/OmniPSTemplates/blob/master/RELEASENOTES.md'
+        # ReleaseNotes = ''
 
         # External dependent modules of this module
         # ExternalModuleDependencies = ''

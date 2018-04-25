@@ -3,14 +3,17 @@
 ###############################################################################
 
 Properties {
-    # ----------------------- Basic properties --------------------------------
+    # --------------------------- Basic properties ----------------------------
+
+    # The project root path
+    $ProjectRoot = Split-Path -parent $PSScriptRoot
 
     # The root directories for the module's docs, src and test.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $DocsRootDir = "$PSScriptRoot\docs"
-    $SrcRootDir  = "$PSScriptRoot\src"
+    $DocsRootDir = "$ProjectRoot\docs"
+    $SrcRootDir  = "$ProjectRoot\src"
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $TestRootDir = "$PSScriptRoot\test"
+    $TestRootDir = "$ProjectRoot\tests"
 
     # The name of your module should match the basename of the PSD1 file.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
@@ -20,7 +23,7 @@ Properties {
 
     # The $OutDir is where module files and updatable help files are staged for signing, install and publishing.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $OutDir = "$PSScriptRoot\Release"
+    $OutDir = "$ProjectRoot\Release"
 
     # The local installation directory for the install task. Defaults to your home Modules location.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
@@ -37,11 +40,27 @@ Properties {
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
     $Exclude = @()
 
-    # ------------------ Script analysis properties ---------------------------
+    # ------------------------- Build Concatenation ---------------------------
+
+    ###################################################################################
+    # WARNING : This task is exprimental. Please open an issue on Github with issues. #
+    ###################################################################################
+
+    # Enable/disable the concatination of your module into fewer files during the build.
+    [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
+    $ConcatenateBuild = $false
+
+    # Select the level of concatenation desired.
+    # 1 - public functions are concatenated to the psm1, private functions are concatenated to a separate file.
+    # 2 - the entire module is concatenated to the psm1. (Localization files and other non-ps1  files will not be concatinated.)
+    [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
+    $ConcatenationLevel = 1
+
+    # ---------------------- Script analysis properties -----------------------
 
     # Enable/disable use of PSScriptAnalyzer to perform script analysis.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $ScriptAnalysisEnabled = $false
+    $ScriptAnalysisEnabled = $true
 
     # When PSScriptAnalyzer is enabled, control which severity level will generate a build failure.
     # Valid values are Error, Warning, Information and None.  "None" will report errors but will not
@@ -56,7 +75,7 @@ Properties {
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
     $ScriptAnalyzerSettingsPath = "$PSScriptRoot\ScriptAnalyzerSettings.psd1"
 
-    # ------------------- Script signing properties ---------------------------
+    # ----------------------- Script signing properties -----------------------
 
     # Set to $true if you want to sign your scripts. You will need to have a code-signing certificate.
     # You can specify the certificate's subject name below. If not specified, you will be prompted to
@@ -82,18 +101,18 @@ Properties {
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
     $CertPath = "Cert:\"
 
-    # -------------------- File catalog properties ----------------------------
+    # ------------------------ File catalog properties ------------------------
 
     # Enable/disable generation of a catalog (.cat) file for the module.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $CatalogGenerationEnabled = $true
+    $CatalogGenerationEnabled = $false
 
     # Select the hash version to use for the catalog file: 1 for SHA1 (compat with Windows 7 and
     # Windows Server 2008 R2), 2 for SHA2 to support only newer Windows versions.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
     $CatalogVersion = 2
 
-    # ---------------------- Testing properties -------------------------------
+    # --------------------------- Testing properties --------------------------
 
     # Enable/disable Pester code coverage reporting.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
@@ -105,7 +124,7 @@ Properties {
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
     $CodeCoverageFiles = "$SrcRootDir\*.ps1", "$SrcRootDir\*.psm1"
 
-    # -------------------- Publishing properties ------------------------------
+    # ------------------------- Publishing properties -------------------------
 
     # Your NuGet API key for the PSGallery.  Leave it as $null and the first time you publish,
     # you will be prompted to enter your API key.  The build will store the key encrypted in the
@@ -122,7 +141,7 @@ Properties {
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
     $ReleaseNotesPath = "$PSScriptRoot\ReleaseNotes.md"
 
-    # ----------------------- Misc properties ---------------------------------
+    # ---------------------------- Misc properties ----------------------------
 
     # In addition, PFX certificates are supported in an interactive scenario only,
     # as a way to import a certificate into the user personal store for later use.

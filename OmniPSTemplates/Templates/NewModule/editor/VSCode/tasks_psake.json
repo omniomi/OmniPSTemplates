@@ -38,7 +38,7 @@
             "suppressTaskName": true,
             "showOutput": "always",
             "args": [
-                "Write-Host 'Invoking psake on build.psake.ps1 -taskList Clean'; Invoke-psake build.psake.ps1 -taskList Clean;",
+                "Write-Host 'Invoking psake on tools\\_build.psake.ps1 -taskList Clean'; Invoke-psake tools\\_build.psake.ps1 -taskList Clean;",
                 "Invoke-Command { Write-Host 'Completed Clean task in task runner.' }"
             ]
         },
@@ -48,7 +48,7 @@
             "isBuildCommand": true,
             "showOutput": "always",
             "args": [
-                "Write-Host 'Invoking psake on build.psake.ps1 -taskList Build'; Invoke-psake build.psake.ps1 -taskList Build;",
+                "Write-Host 'Invoking psake on tools\\_build.psake.ps1 -taskList Build'; Invoke-psake tools\\_build.psake.ps1 -taskList Build;",
                 "Invoke-Command { Write-Host 'Completed Build task in task runner.' }"
             ]
         },
@@ -57,7 +57,7 @@
             "suppressTaskName": true,
             "showOutput": "always",
             "args": [
-                "Write-Host 'Invoking psake on build.psake.ps1 -taskList BuildHelp'; Invoke-psake build.psake.ps1 -taskList BuildHelp;",
+                "Write-Host 'Invoking psake on tools\\_build.psake.ps1 -taskList BuildHelp'; Invoke-psake tools\\_build.psake.ps1 -taskList BuildHelp;",
                 "Invoke-Command { Write-Host 'Completed BuildHelp task in task runner.' }"
             ]
         },
@@ -66,7 +66,7 @@
             "suppressTaskName": true,
             "showOutput": "always",
             "args": [
-                "Write-Host 'Invoking psake on build.psake.ps1 -taskList Analyze'; Invoke-psake build.psake.ps1 -taskList Analyze;",
+                "Write-Host 'Invoking psake on tools\\_build.psake.ps1 -taskList Analyze'; Invoke-psake tools\\_build.psake.ps1 -taskList Analyze;",
                 "Invoke-Command { Write-Host 'Completed Analyze task in task runner.' }"
             ]
         },
@@ -75,7 +75,7 @@
             "suppressTaskName": true,
             "showOutput": "always",
             "args": [
-                "Write-Host 'Invoking psake on build.psake.ps1 -taskList Install'; Invoke-psake build.psake.ps1 -taskList Install;",
+                "Write-Host 'Invoking psake on tools\\_build.psake.ps1 -taskList Install'; Invoke-psake tools\\_build.psake.ps1 -taskList Install;",
                 "Invoke-Command { Write-Host 'Completed Install task in task runner.' }"
             ]
         },
@@ -84,7 +84,7 @@
             "suppressTaskName": true,
             "showOutput": "always",
             "args": [
-                "Write-Host 'Invoking psake on build.psake.ps1 -taskList Publish'; Invoke-psake build.psake.ps1 -taskList Publish;",
+                "Write-Host 'Invoking psake on tools\\_build.psake.ps1 -taskList Publish'; Invoke-psake tools\\_build.psake.ps1 -taskList Publish;",
                 "Invoke-Command { Write-Host 'Completed Publish task in task runner.' }"
             ]
         },
@@ -93,8 +93,8 @@
             "suppressTaskName": true,
             "showOutput": "always",
             "args": [
-                "Write-Host 'Invoking psake on build.psake.ps1 -taskList ExportPublicFunctions'; Invoke-psake build.psake.ps1 -taskList ExportPublicFunctions;",
-                "Invoke-Command { Write-Host 'Completed ExportPublicFunctions task in task runner.' }"
+                "Write-Host 'Invoking psake on tools\\_build.psake.ps1 -taskList ExportFunctionsToSrc'; Invoke-psake tools\\_build.psake.ps1 -taskList ExportFunctionsToSrc;",
+                "Invoke-Command { Write-Host 'Completed ExportFunctionsToSrc task in task runner.' }"
             ]
         }
 	]
