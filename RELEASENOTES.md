@@ -1,3 +1,8 @@
+# v1.1.1 - 27/04/18
+- Minor bug fixes
+- NewModule template increated to v2.0.1
+- NewScript template increased to v1.0.1s
+
 # v1.1.0 - 24/04/18
 * NewModule template increased to v2.0.0
   * Various changes to comments and documentation.

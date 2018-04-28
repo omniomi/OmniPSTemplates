@@ -6,7 +6,7 @@
         <title>Omni's New Script</title>
         <author>omniomi</author>
         <description>Scaffolds the files required for a PowerShell script.</description>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <tags>Script, ScriptFileInfo, Build</tags>
     </metadata>
 

@@ -147,7 +147,7 @@ Properties {
     # as a way to import a certificate into the user personal store for later use.
     # This can be provided using the CertPfxPath parameter. PFX passwords will not be stored.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $SettingsPath = "$env:LOCALAPPDATA\Plaster\NewModuleTemplate\SecuredBuildSettings.clixml"
+    $SettingsPath = "$env:LOCALAPPDATA\Plaster\OmniModuleTemplate\SecuredBuildSettings.clixml"
 
     # Specifies an output file path to send to Invoke-Pester's -OutputFile parameter.
     # This is typically used to write out test results so that they can be sent to a CI
