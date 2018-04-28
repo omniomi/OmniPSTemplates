@@ -99,7 +99,11 @@ Task ExportPublicFunctions -requiredVariables SrcRootDir, ModuleOutDir, ModuleNa
         }
     })
 
-    Update-ModuleManifest -Path "$ModuleOutDir\$ModuleName.psd1" -FunctionsToExport $PublicFunctions
+    if ($PublicFunctions.Count -ge 1) {
+        Update-ModuleManifest -Path "$ModuleOutDir\$ModuleName.psd1" -FunctionsToExport $PublicFunctions
+    } else {
+        "No public fuctions to export."
+    }
 }
 
 Task ExportFunctionsToSrc -requiredVariables SrcRootDir, ModuleName {
@@ -112,7 +116,11 @@ Task ExportFunctionsToSrc -requiredVariables SrcRootDir, ModuleName {
         }
     })
 
-    Update-ModuleManifest -Path "$SrcRootDir\$ModuleName.psd1" -FunctionsToExport $PublicFunctions
+    if ($PublicFunctions.Count -ge 1) {
+        Update-ModuleManifest -Path "$SrcRootDir\$ModuleName.psd1" -FunctionsToExport $PublicFunctions
+    } else {
+        "No public fuctions to export."
+    }
 }
 
 Task Clean -depends Init -requiredVariables OutDir {
